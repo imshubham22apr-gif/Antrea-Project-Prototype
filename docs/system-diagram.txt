@@ -1,0 +1,53 @@
+BPF Validation Framework - System Architecture
+
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                                                                                 │
+│    [User Input]                                                                 │
+│    --protocol tcp                                                               │
+│    --dst-port 80                                                                │
+│         │                                                                       │
+│         ▼                                                                       │
+│    ┌─────────┐                                                                  │
+│    │   CLI   │  Parse & Validate                                               │
+│    │ Parser  │                                                                  │
+│    └────┬────┘                                                                  │
+│         │                                                                       │
+│         ▼                                                                       │
+│    ┌─────────┐                                                                  │
+│    │ Packet  │  Structured Filter                                              │
+│    │ Filter  │  {protocol: tcp, port: 80}                                      │
+│    └────┬────┘                                                                  │
+│         │                                                                       │
+│         ├─────────────────────────┬─────────────────────────┐                  │
+│         │                         │                         │                  │
+│         ▼                         ▼                         ▼                  │
+│    ┌─────────┐               ┌─────────┐               ┌─────────┐             │
+│    │tcpdump  │               │ Antrea  │               │Semantic │             │
+│    │Reference│               │ Style   │               │Compare  │             │
+│    │   BPF   │               │   BPF   │               │ Engine  │             │
+│    │Generator│               │Generator│               │         │             │
+│    └────┬────┘               └────┬────┘               └────┬────┘             │
+│         │                         │                         │                  │
+│         └─────────────────────────┼─────────────────────────┘                  │
+│                                   │                                            │
+│                                   ▼                                            │
+│                              ┌─────────┐                                       │
+│                              │Validation│                                      │
+│                              │ Report  │                                       │
+│                              │         │                                       │
+│                              │ Score   │                                       │
+│                              │Verdict  │                                       │
+│                              │Visual   │                                       │
+│                              └─────────┘                                       │
+│                                                                                 │
+└─────────────────────────────────────────────────────────────────────────────────┘
+
+Key Components:
+• CLI Parser: Input validation and parsing
+• Packet Filter: Unified filter representation  
+• tcpdump Reference: Ground truth BPF generation
+• Antrea Style: Optimized BPF with enhancements
+• Semantic Compare: Purpose-based comparison
+• Validation Report: Visual side-by-side results
+
+Data Flow: Input → Parse → Generate (Parallel) → Compare → Report
